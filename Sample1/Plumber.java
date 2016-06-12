@@ -20,17 +20,26 @@
 ******************************************************************************************************************/
 public class Plumber
 {
-   public static void main( String argv[])
+   public static void main( String argv[]) 
    {
 		/****************************************************************************
 		* Here we instantiate three filters.
 		****************************************************************************/
 
+	   
+	   
+	   
+	   
 		SourceFilter Filter1 = new SourceFilter();
 		MiddleFilter Filter2 = new MiddleFilter();
 		//SinkFilter Filter3 = new SinkFilter();
 		SystemB_SinkFilter Filter3 = new SystemB_SinkFilter();
+		//SystemA_SinkFilter Filter3 = new SystemA_SinkFilter();
 
+		
+		
+		
+		
 		/****************************************************************************
 		* Here we connect the filters starting with the sink filter (Filter 1) which
 		* we connect to Filter2 the middle filter. Then we connect Filter2 to the
@@ -39,7 +48,9 @@ public class Plumber
 
 		Filter3.Connect(Filter2); // This esstially says, "connect Filter3 input port to Filter2 output port
 		Filter2.Connect(Filter1); // This esstially says, "connect F	ilter2 intput port to Filter1 output port
-
+		
+		
+		
 		/****************************************************************************
 		* Here we start the filters up. All-in-all,... its really kind of boring.
 		****************************************************************************/
@@ -47,6 +58,7 @@ public class Plumber
 		Filter1.start();
 		Filter2.start();
 		Filter3.start();
+		
 
    } // main
 

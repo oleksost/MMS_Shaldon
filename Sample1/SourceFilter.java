@@ -24,7 +24,7 @@ public class SourceFilter extends FilterFramework
 	public void run()
     {
 
-		String fileName = "/Users/d065820/Documents/HU_Belrin/MMS/MMSE-Ex-Sheet-02-sources/DataSets/FlightData.dat";	// Input data file.
+		String fileName = "/Users/uteandres/Google Drive/Humboldt/2. Semester/Methoden und Modelle des Systementwurfs/MMS_Shaldon/DataSets/FlightData.dat";	// Input data file.
 		int bytesread = 0;					// Number of bytes read from the input file.
 		int byteswritten = 0;				// Number of bytes written to the stream.
 		DataInputStream in = null;			// File stream reference.

@@ -1,16 +1,38 @@
+/******************************************************************************************************************
+* File:SinkFilter.java
+* Course: 17655
+* Project: Assignment 1
+* Copyright: Copyright (c) 2003 Carnegie Mellon University
+* Versions:
+*	1.0 November 2008 - Sample Pipe and Filter code (ajl).
+*
+* Description:
+*
+* This class serves as an example for using the SinkFilterTemplate for creating a sink filter. This particular
+* filter reads some input from the filter's input port and does the following:
+*
+*	1) It parses the input stream and "decommutates" the measurement ID
+*	2) It parses the input steam for measurments and "decommutates" measurements, storing the bits in a long word.
+*
+* This filter illustrates how to convert the byte stream data from the upstream filterinto useable data found in
+* the stream: namely time (long type) and measurements (double type).
+*
+*
+* Parameters: 	None
+*
+* Internal Methods: None
+*
+******************************************************************************************************************/
 import java.util.*;						// This class is used to interpret time words
-
-
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
-import java.lang.reflect.Array;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;		// This class is used to format and write time in a string format.
 
-public class SystemB_SinkFilter extends FilterFramework {
-	
+public class SystemA_SinkFilter extends FilterFramework
+{
 	public void run()
     {
 		/************************************************************************************
@@ -20,12 +42,11 @@ public class SystemB_SinkFilter extends FilterFramework {
 		*************************************************************************************/
 
 		Calendar TimeStamp = Calendar.getInstance();
-		SimpleDateFormat TimeStampFormat = new SimpleDateFormat("yyyy:dd:hh:mm:ss"); 
+		SimpleDateFormat TimeStampFormat = new SimpleDateFormat("yyyy:dd:hh:mm:ss");
 		PrintWriter writer;
-		PrintWriter writerb;
 		try {
-			writer = new PrintWriter("/Users/uteandres/Google Drive/Humboldt/2. Semester/Methoden und Modelle des Systementwurfs/MMS_Shaldon/Output/OutputB.txt", "UTF-8");
-			writerb = new PrintWriter("/Users/uteandres/Google Drive/Humboldt/2. Semester/Methoden und Modelle des Systementwurfs/MMS_Shaldon/Output/WildPoints.txt", "UTF-8");
+			writer = new PrintWriter("/Users/uteandres/Google Drive/Humboldt/2. Semester/Methoden und Modelle des Systementwurfs/MMS_Shaldon/Output/OutputA.txt", "UTF-8");
+									
 			
 		int MeasurementLength = 8;		// This is the length of all measurements (including time) in bytes
 		int IdLength = 4;				// This is the length of IDs in the byte stream
@@ -33,36 +54,25 @@ public class SystemB_SinkFilter extends FilterFramework {
 		byte databyte = 0;				// This is the data byte read from the stream
 		int bytesread = 0;				// This is the number of bytes read from the stream
 
-		long measurement=0;				// This is the word used to store all measurements - conversions are illustrated.
+		long measurement;				// This is the word used to store all measurements - conversions are illustrated.
 		int id;							// This is the measurement id
 		int i;							// This is a loop counter
-		
-		int count_outliers=0;
-		double altitude_cash=0.0;
-		
-		
-		long currentTime=0;
 		double cash_Pressure=0.0;
+		Double erg_id2 = 0.0;
 		
-		List<ArrayList<Object>> WaitingLIst=new ArrayList<ArrayList<Object>>();
-		ArrayList<Object> dataset= new ArrayList<Object>();	
-		ArrayList<Object> dataset_right= new ArrayList<Object>();
 		
-		DecimalFormat dfpsi = new DecimalFormat("0000.00000");
 		DecimalFormat dfm = new DecimalFormat("000000.00000");
 		DecimalFormat dft = new DecimalFormat("000.00000");
+		
+		writer.format("%1s%30s%17s","Time:", "Temperature(C):", "Altitude(m):");
+		writer.print("\n____________________________________________________________");
+		writer.print("\n");
+		
 		
 		/*************************************************************
 		*	First we announce to the world that we are alive...
 		**************************************************************/
 
-		writer.format("%1s%30s%17s%20s","Time:", "Temperature(C):", "Altitude(m):", "Pressure(psi):");
-		writer.print("\n______________________________________________________________________________");
-		
-		writerb.format("%1s%30s","Time:", "Pressure(psi):");
-		writerb.print("\n________________________________________");
-		
-		
 		while (true)
 		{
 			try
@@ -130,25 +140,10 @@ public class SystemB_SinkFilter extends FilterFramework {
 				// dealing with time arithmetically or for string display purposes. This is
 				// illustrated below.
 				****************************************************************************/
-                
-                
+
 				if ( id == 0 )
 				{
-					if (dataset_right.size()>0){
-						writer.print("\n");
-						
-						if (dataset_right.get(0)==":"){
-							writer.format("%7s%20s%18s%21s",dataset_right.get(0), dataset_right.get(3), dataset_right.get(1), dataset_right.get(2));
-						}else{
-							writer.format("%1s%15s%20s%20s",dataset_right.get(0), dft.format(dataset_right.get(3)), dfm.format(dataset_right.get(1)), dfpsi.format(dataset_right.get(2)));	
-						}
-						dataset_right.clear();
-					}
-					
 					TimeStamp.setTimeInMillis(measurement);
-					currentTime=measurement;
-					dataset=new ArrayList<Object>();
-										
 
 				} // if
 
@@ -161,81 +156,42 @@ public class SystemB_SinkFilter extends FilterFramework {
 				// we print the time stamp and the data associated with the ID we are interested
 				// in.
 				****************************************************************************/
+				
+				
+				
+				
 				if ( id == 2 )
 				{
-					Double erg_id2=Double.longBitsToDouble(measurement)/3.28084;
-					altitude_cash=erg_id2;
+					erg_id2 = (Double.longBitsToDouble(measurement)/3.28084);
 					
 				} // if
-				
-				
-				if ( id == 3 )
-				{ 
-					Double erg_id3=Double.longBitsToDouble(measurement);
-
-					if ((erg_id3<0.0 || Math.abs(cash_Pressure-erg_id3)>10.0) &&cash_Pressure>0.0){  
-					
-						if (cash_Pressure==0.0){
-							
-							cash_Pressure=erg_id3;				
-							
-						}
-						
-						
-						
-						dataset.add(TimeStampFormat.format(TimeStamp.getTime()));
-						dataset.add(altitude_cash);
-						dataset.add(erg_id3);
-						
-						dataset_right.add(":");
-						dataset_right.add(":");
-						dataset_right.add(":");
-						count_outliers++;
-					
-					} else{
-						if (count_outliers>0){
-								 for (int ii = WaitingLIst.size()-count_outliers; ii < WaitingLIst.size(); ii++) {
-										 WaitingLIst.get(ii).set(2, (erg_id3+cash_Pressure)/2.0);
-										 
-										 writerb.print("\n");
-										 writerb.format("%1s%15s", WaitingLIst.get(ii).get(0) , dfpsi.format((WaitingLIst.get(ii).get(2))));
-										
-										 count_outliers=0;
-										 
-										 
-								 }   
-						}
-						
-						dataset_right.add(TimeStampFormat.format(TimeStamp.getTime()));
-						dataset_right.add(altitude_cash);
-						dataset_right.add(erg_id3);
-						
-						cash_Pressure=erg_id3;
-						
-							 
-						}
-					}
-				
 				
 				
 				if ( id == 4 )
 				{
-					Double erg =  new Double((Double.longBitsToDouble(measurement)-32)/1.8);	
-					if (dataset.size()>0){
-						
-						dataset.add(erg);
-						dataset_right.add(":");
-						
-						WaitingLIst.add(dataset);
-						
-						
-					}else{
-						dataset_right.add(erg);
-					}
+					
+					writer.format("%1s%15s%20s",TimeStampFormat.format(TimeStamp.getTime()), dft.format(((Double.longBitsToDouble(measurement)-32.0)/1.8)), dfm.format(erg_id2));
+					writer.print("\n");					String erg =  new String(TimeStampFormat.format(TimeStamp.getTime()) + " ID = " + id + " " + ((Double.longBitsToDouble(measurement)-32)/1.8));
 				
 				} // if
 
-
+				
+				
+				if ( id == 3 )
+				{
+					Double erg_id3=Double.longBitsToDouble(measurement);
+					if ( erg_id3>=0){
+						if (Math.abs(cash_Pressure-erg_id3)<=10){
+						  
+						  
+						 }
+						cash_Pressure=erg_id3;
+						}
+					}
+					
+				//} // if
+				
+				
 			} // try
 
 			/*******************************************************************************
@@ -247,10 +203,8 @@ public class SystemB_SinkFilter extends FilterFramework {
 			catch (EndOfStreamException e)
 			{
 				ClosePorts();
-				
+				//System.out.print( "\n" + this.getName() + "::Sink Exiting; bytes read: " + bytesread );
 				writer.close();
-				writerb.close();
-				
 				break;
 
 			} // catch
@@ -261,7 +215,9 @@ public class SystemB_SinkFilter extends FilterFramework {
 			e1.printStackTrace();
 		}
 		
-		System.out.println("\n" + "System B wurde ausgeführt und ist nun fertig");
+		System.out.println("\n" + "System A wurde ausgeführt und ist nun fertig");
 		
    } // run
-}
+	
+
+} // SingFilter

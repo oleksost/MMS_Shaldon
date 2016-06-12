@@ -44,8 +44,10 @@ public class SinkFilter extends FilterFramework
 		SimpleDateFormat TimeStampFormat = new SimpleDateFormat("yyyy MM dd::hh:mm:ss:SSS");
 		PrintWriter writer;
 		try {
-			writer = new PrintWriter("/Users/d065820/Documents/HU_Belrin/MMS/MMSE-Ex-Sheet-02-sources/Output/Aufgabe1B2.txt", "UTF-8");
-
+			writer = new PrintWriter("/Users/uteandres/Google Drive/Humboldt/2. Semester/Methoden und Modelle des Systementwurfs/MMS_Shaldon/Output/Aufgabe1B2.txt", "UTF-8");
+									///Users/uteandres/Google Drive/Humboldt/2. Semester/Methoden und Modelle des Systementwurfs/MMS_Shaldon/DataSets
+									///Users/uteandres/Google Drive/Humboldt/2. Semester/Methoden und Modelle des Systementwurfs/MMS_Shaldon
+			
 		int MeasurementLength = 8;		// This is the length of all measurements (including time) in bytes
 		int IdLength = 4;				// This is the length of IDs in the byte stream
 

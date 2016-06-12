@@ -2,6 +2,6 @@
 <classpath>
 	<classpathentry kind="src" path="Sample1"/>
 	<classpathentry kind="src" path="Templates"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry exported="true" kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
